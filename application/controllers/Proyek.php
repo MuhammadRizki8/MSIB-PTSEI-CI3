@@ -17,32 +17,32 @@ class Proyek extends CI_Controller {
             $data = [
                 'namaProyek' => $this->input->post('namaProyek'),
                 'client' => $this->input->post('client'),
-                'tglMulai' => $this->input->post('tglMulai'),
-                'tglSelesai' => $this->input->post('tglSelesai'),
+                'tglMulai' => $this->input->post('tglMulai') . ':00',  // Format datetime
+                'tglSelesai' => $this->input->post('tglSelesai') . ':00', // Format datetime
                 'pimpinanProyek' => $this->input->post('pimpinanProyek'),
                 'keterangan' => $this->input->post('keterangan'),
-                'lokasiId' => $this->input->post('lokasiId')
+                'lokasi' => ['id' => $this->input->post('lokasiId')]  // Format lokasi
             ];
             $this->api_request('POST', 'http://localhost:8080/proyek', json_encode($data));
             redirect('proyek');
         } else {
             $data['lokasi'] = json_decode($this->api_request('GET', 'http://localhost:8080/lokasi'), true);
             $this->load->view('templates/header');
-            $this->load->view('proyek/create', $data);
+            $this->load->view('proyek/form', $data);
             $this->load->view('templates/footer');
         }
     }
-
+    
     public function edit($id) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'namaProyek' => $this->input->post('namaProyek'),
                 'client' => $this->input->post('client'),
-                'tglMulai' => $this->input->post('tglMulai'),
-                'tglSelesai' => $this->input->post('tglSelesai'),
+                'tglMulai' => $this->input->post('tglMulai') . ':00',  // Format datetime
+                'tglSelesai' => $this->input->post('tglSelesai') . ':00', // Format datetime
                 'pimpinanProyek' => $this->input->post('pimpinanProyek'),
                 'keterangan' => $this->input->post('keterangan'),
-                'lokasiId' => $this->input->post('lokasiId')
+                'lokasi' => ['id' => $this->input->post('lokasiId')]  // Format lokasi
             ];
             $this->api_request('PUT', 'http://localhost:8080/proyek/' . $id, json_encode($data));
             redirect('proyek');
@@ -50,11 +50,12 @@ class Proyek extends CI_Controller {
             $data['proyek'] = json_decode($this->api_request('GET', 'http://localhost:8080/proyek/' . $id), true);
             $data['lokasi'] = json_decode($this->api_request('GET', 'http://localhost:8080/lokasi'), true);
             $this->load->view('templates/header');
-            $this->load->view('proyek/edit', $data);
+            $this->load->view('proyek/form', $data);
             $this->load->view('templates/footer');
         }
     }
-
+    
+    
     public function delete($id) {
         $this->api_request('DELETE', 'http://localhost:8080/proyek/' . $id);
         redirect('proyek');
